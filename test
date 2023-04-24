@@ -1,1 +1,1 @@
-sed -i 's/site=\["us-intra/site=\["us-intra,abc/g' your_file.py
+sed -i "/def site = \[/ s/\]\$/,\"${new_location}\"]/" Jenkinsfile
