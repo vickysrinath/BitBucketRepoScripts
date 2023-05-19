@@ -92,3 +92,5 @@ fi
 if [[ "$node_type" == "1" ]]; then
     /apigw/v770/apigateway/posix/bin/startinstance -n "$instance_name" -g "$group_name" -d
 fi
+mv "$maintenance_file_path" "${apigw_directory}/maintenance1.json"
+
