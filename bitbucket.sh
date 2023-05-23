@@ -1,0 +1,1 @@
+curl -u "username:password" -H "Content-Type: application/json" -X POST -d '{"name": "refs/heads/master", "startPoint": "refs/heads/master"}' https://your-bitbucket-server-url/rest/branch-utils/1.0/projects/projectKey/repos/repositorySlug/branches
