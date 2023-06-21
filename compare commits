@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Function to compare the last commits of two repositories
+compare_last_commits() {
+    repo_path1=$1
+    repo_path2=$2
+
+    # Get the commit hashes of the last commits on the V7.7_branch
+    last_commit1=$(git -C $repo_path1 rev-parse V7.7_branch)
+    last_commit2=$(git -C $repo_path2 rev-parse V7.7_branch)
+
+    # Compare the commit hashes
+    if [ "$last_commit1" = "$last_commit2" ]; then
+        echo "The last commits in $repo_path1 and $repo_path2 on the V7.7_branch are the same."
+    else
+        echo "The last commits in $repo_path1 and $repo_path2 on the V7.7_branch are different."
+    fi
+}
+
+# Usage: ./compare_commits.sh <repo_list_file> <project_path1> <project_path2>
+# Example: ./compare_commits.sh repos.txt /path/to/project1 /path/to/project2
+
+# Check the number of arguments
+if [ "$#" -ne 3 ]; then
+    echo "Usage: ./compare_commits.sh <repo_list_file> <project_path1> <project_path2>"
+    exit 1
+fi
+
+repo_list_file=$1
+project_path1=$2
+project_path2=$3
+
+# Read the repository list file
+while IFS= read -r repo; do
+    # Formulate the repository paths in both projects
+    repo_path1="$project_path1/$repo"
+    repo_path2="$project_path2/$repo"
+
+    # Call the compare_last_commits function
+    compare_last_commits "$repo_path1" "$repo_path2"
+done < "$repo_list_file"
