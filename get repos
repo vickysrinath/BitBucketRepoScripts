@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# GitHub Enterprise URL and personal access token
+github_url="<github_enterprise_url>"
+access_token="<personal_access_token>"
+
+# Project code
+project_code="<project_code>"
+
+# API endpoint to retrieve repositories of the project
+api_url="$github_url/api/v3/orgs/$project_code/repos"
+
+# Send GET request to GitHub API
+response=$(curl -s -H "Authorization: Bearer $access_token" "$api_url")
+
+# Parse the JSON response and extract repository names
+repo_names=($(echo "$response" | jq -r '.[].name'))
+
+# Print the repository names
+echo "Repositories in the project '$project_code':"
+
+for repo_name in "${repo_names[@]}"; do
+    echo "- $repo_name"
+done
