@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Bitbucket Enterprise API credentials
+USERNAME="YOUR_USERNAME"
+PASSWORD="YOUR_PASSWORD"
+BASE_URL="https://your-bitbucket-instance-url/rest/api/1.0"
+
+# Project details
+PROJECT_KEY="YOUR_PROJECT_KEY"
+
+# Get repositories in the project
+REPOSITORIES=$(curl -s -u "$USERNAME:$PASSWORD" "$BASE_URL/projects/$PROJECT_KEY/repos" | jq -r '.values[].slug')
+
+# Print repositories
+echo "Repositories in the project:"
+for REPO in $REPOSITORIES; do
+  echo "- $REPO"
+done
+
+# Confirmation prompt
+read -p "Are you sure you want to delete all these repositories? (y/n): " CONFIRMATION
+
+if [[ $CONFIRMATION =~ ^[Yy]$ ]]; then
+  # Delete repositories
+  for REPO in $REPOSITORIES; do
+    DELETE_URL="$BASE_URL/projects/$PROJECT_KEY/repos/$REPO"
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -u "$USERNAME:$PASSWORD" "$DELETE_URL")
+
+    if [ $RESPONSE -eq 204 ]; then
+      echo "Repository '$REPO' deleted successfully."
+    else
