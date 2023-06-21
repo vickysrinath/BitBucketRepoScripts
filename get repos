@@ -10,11 +10,12 @@ project_code="<project_code>"
 # API endpoint to retrieve repositories of the project
 api_url="$github_url/api/v3/orgs/$project_code/repos"
 
-# Send GET request to GitHub API
-response=$(curl -s -H "Authorization: Bearer $access_token" "$api_url")
+# Send GET request to GitHub API and save response to a temporary file
+response_file=$(mktemp)
+curl -s -H "Authorization: Bearer $access_token" "$api_url" -o "$response_file"
 
 # Parse the JSON response and extract repository names
-repo_names=($(echo "$response" | jq -r '.[].name'))
+repo_names=($(grep -o '"name": "[^"]*' "$response_file" | awk -F': "' '{print $2}'))
 
 # Print the repository names
 echo "Repositories in the project '$project_code':"
@@ -22,3 +23,6 @@ echo "Repositories in the project '$project_code':"
 for repo_name in "${repo_names[@]}"; do
     echo "- $repo_name"
 done
+
+# Clean up the temporary file
+rm "$response_file"
